@@ -1,0 +1,6 @@
+[requires]
+oatpp/1.2.5
+gtest/1.11.0
+
+[generators]
+cmake

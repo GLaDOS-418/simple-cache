@@ -14,13 +14,16 @@
  *  Order of components initialization is from top to bottom
  */
 class AppComponent {
+    oatpp::String m_host;
+    oatpp::UInt16 m_port;
 public:
   
+    AppComponent( const oatpp::String& host, const oatpp::Int16& port ) : m_host{ host }, m_port{ port } { }
   /**
    *  Create ConnectionProvider component which listens on the port
    */
-  OATPP_CREATE_COMPONENT(std::shared_ptr<oatpp::network::ServerConnectionProvider>, serverConnectionProvider)([] {
-    return oatpp::network::tcp::server::ConnectionProvider::createShared({"0.0.0.0", 8000, oatpp::network::Address::IP_4});
+  OATPP_CREATE_COMPONENT(std::shared_ptr<oatpp::network::ServerConnectionProvider>, serverConnectionProvider)([this] {
+    return oatpp::network::tcp::server::ConnectionProvider::createShared({m_host, m_port, oatpp::network::Address::IP_4});
   }());
   
   /**

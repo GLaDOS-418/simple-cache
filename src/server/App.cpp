@@ -1,4 +1,4 @@
-#include "./controller/MyController.hpp"
+#include "./controller/CacheController.hpp"
 #include "./AppComponent.hpp"
 
 #include "oatpp/network/Server.hpp"
@@ -8,14 +8,14 @@
 void run() {
 
   /* Register Components in scope of run() method */
-  AppComponent components;
+    AppComponent components{ "localhost", 8000 };
 
   /* Get router component */
   OATPP_COMPONENT(std::shared_ptr<oatpp::web::server::HttpRouter>, router);
 
   /* Create MyController and add all of its endpoints to router */
-  auto myController = std::make_shared<MyController>();
-  myController->addEndpointsToRouter(router);
+  auto cacheController = std::make_shared<CacheController>();
+  cacheController->addEndpointsToRouter(router);
 
   /* Get connection handler component */
   OATPP_COMPONENT(std::shared_ptr<oatpp::network::ConnectionHandler>, connectionHandler);
@@ -27,7 +27,7 @@ void run() {
   oatpp::network::Server server(connectionProvider, connectionHandler);
 
   /* Priny info about server port */
-  OATPP_LOGI("MyApp", "Server running on port %s", connectionProvider->getProperty("port").getData());
+  OATPP_LOGI("Cache", "Server running on port %s", connectionProvider->getProperty("port").getData());
 
   /* Run server */
   server.run();

@@ -1,7 +1,8 @@
-#ifndef MyController_hpp
-#define MyController_hpp
+#ifndef CacheController_hpp
+#define CacheController_hpp
 
-#include "dto/DTOs.hpp"
+#include "dto/RetrieveEntryDto.h"
+#include "dto/AddEntryDto.h"
 
 #include "oatpp/web/server/api/ApiController.hpp"
 #include "oatpp/core/macro/codegen.hpp"
@@ -12,21 +13,21 @@
 /**
  * Sample Api Controller.
  */
-class MyController : public oatpp::web::server::api::ApiController {
+class CacheController : public oatpp::web::server::api::ApiController {
 public:
   /**
    * Constructor with object mapper.
    * @param objectMapper - default object mapper used to serialize/deserialize DTOs.
    */
-  MyController(OATPP_COMPONENT(std::shared_ptr<ObjectMapper>, objectMapper))
+  CacheController(OATPP_COMPONENT(std::shared_ptr<ObjectMapper>, objectMapper))
     : oatpp::web::server::api::ApiController(objectMapper)
   {}
 public:
   
-  ENDPOINT("GET", "/", root) {
-    auto dto = MyDto::createShared();
-    dto->statusCode = 200;
-    dto->message = "Hello World!";
+  ENDPOINT("GET", "/cache", getValue ) {
+    auto dto = dto::RetrieveEntry::createShared();
+    dto->statusCode = 42;
+    dto->value = "final foo4";
     return createDtoResponse(Status::CODE_200, dto);
   }
   
@@ -36,4 +37,4 @@ public:
 
 #include OATPP_CODEGEN_END(ApiController) //<-- End Codegen
 
-#endif /* MyController_hpp */
+#endif /* CacheController_hpp */

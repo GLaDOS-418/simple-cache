@@ -1,6 +1,6 @@
 #include "MyControllerTest.hpp"
 
-#include "controller/MyController.hpp"
+#include "controller/CacheController.hpp"
 
 #include "app/MyApiTestClient.hpp"
 #include "app/TestComponent.hpp"
@@ -18,7 +18,7 @@ void MyControllerTest::onRun() {
   oatpp::test::web::ClientServerTestRunner runner;
 
   /* Add MyController endpoints to the router of the test server */
-  runner.addController(std::make_shared<MyController>());
+  runner.addController(std::make_shared<CacheController>());
 
   /* Run test */
   runner.run([this, &runner] {
@@ -43,12 +43,12 @@ void MyControllerTest::onRun() {
     OATPP_ASSERT(response->getStatusCode() == 200);
 
     /* Read response body as MessageDto */
-    auto message = response->readBodyToDto<oatpp::Object<MyDto>>(objectMapper.get());
+    auto message = response->readBodyToDto<oatpp::Object<dto::RetrieveEntry>>(objectMapper.get());
 
     /* Assert that received message is as expected */
     OATPP_ASSERT(message);
     OATPP_ASSERT(message->statusCode == 200);
-    OATPP_ASSERT(message->message == "Hello World!");
+    OATPP_ASSERT(message->value == "Hello World!");
 
   }, std::chrono::minutes(10) /* test timeout */);
 
