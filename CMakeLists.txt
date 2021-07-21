@@ -15,7 +15,7 @@ add_library(${project_name}-lib
         "src/controller/CacheController.cpp"
         "src/controller/CacheController.hpp"
         "src/dto/AddEntryDto.h"
- "src/dto/RetrieveEntryDto.h")
+ "src/dto/RetrieveEntryDto.h" "src/cache/LRUCache.h" "src/cache/LRUCache.cpp")
 
 ## link libs
 
