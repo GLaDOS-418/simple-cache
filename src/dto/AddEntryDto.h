@@ -7,16 +7,21 @@
 #include OATPP_CODEGEN_BEGIN(DTO)
 
 namespace dto {
-    /**
-     *  Data Transfer Object. Object containing fields only.
-     *  Used in API for serialization/deserialization and validation
-     */
-    class AddEntryDto : public oatpp::DTO {
 
-        DTO_INIT( AddEntryDto, DTO )
+    class AddEntryReqDto : public oatpp::DTO {
+
+        DTO_INIT( AddEntryReqDto, DTO )
 
         DTO_FIELD( String, key );
         DTO_FIELD( String, value );
+
+    };
+
+    class AddEntryResDto : public oatpp::DTO {
+
+        DTO_INIT( AddEntryResDto, DTO )
+
+        DTO_FIELD( Int16, statusCode ); // status about whether new entry added, old updated, error
 
     };
 
@@ -24,4 +29,4 @@ namespace dto {
 
 #include OATPP_CODEGEN_END(DTO)
 
-#endif /* DTOs_hpp */
+#endif //!ADDENTRY_HPP

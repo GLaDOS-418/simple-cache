@@ -8,18 +8,23 @@
 
 namespace cache {
 
-    using Key = std::string;
-    using Value = std::string;
-
-    class LRUCache : public cache::ICache<Key, Value> {
+    class LRUCache : public cache::ICache {
     public :
 
         Status put( const Key&, const Value& ) override;
         std::tuple<Status, Value> get( const Key& ) const override;
 
+        LRUCache( );
+        ~LRUCache( ) = default;
+
+        LRUCache( const LRUCache& ) = delete;
+        LRUCache& operator=( const LRUCache& ) = delete;
+        LRUCache( LRUCache&& ) = delete;
+        LRUCache&& operator=( LRUCache&& ) = delete;
+
     private:
         struct LRUCacheImpl;
-        std::unique_ptr<LRUCacheImpl> pImpl;
+        std::shared_ptr<LRUCacheImpl> pImpl;
     };
 }
 

@@ -6,6 +6,8 @@
 
 namespace cache {
 
+    LRUCache::LRUCache( ) : pImpl{ std::make_shared <LRUCache::LRUCacheImpl>( ) } {}
+
     struct LRUCache::LRUCacheImpl {
     private:
         struct List {

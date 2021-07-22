@@ -4,29 +4,29 @@
 #include <string>
 #include <tuple>
 
+#include "oatpp/core/Types.hpp"
+
 namespace cache {
 
-    enum class Status {
-        INVALID, // invalid request, request denied/dropped
-        UPDATE,  // value updated
-        NEW,     // new entry added in cache
-        FOUND,   // requested value for a key found
+    enum Status : uint16_t {
+        FOUND = 0,   // requested value for a key found
         NOTFOUND, // key does not exist
+        NEW,     // new entry added in cache
+        UPDATE,  // value updated
+        INVALID, // invalid request, request denied/dropped
         ERROR
     };
 
-    template< class K = std::string, class V = std::string >
+    using Key = oatpp::String;
+    using Value = oatpp::String;
+
+    //using Key = std::string;
+    //using Value = std::string;
+
     class ICache {
     public:
-        virtual std::tuple<Status, V> get( const K& ) const = 0;
-        virtual Status put( const K&, const V& ) = 0;
-
-        virtual ~ICache( ) = default;
-
-        //protected:
-        //    virtual bool isFull( ) const = 0;
-        //    virtual void evictEntry( ) = 0;
-        //    virtual bool isExpired( const K& ) const = 0;
+        virtual std::tuple<Status, Value> get( const Key& ) const = 0;
+        virtual Status put( const Key&, const Value& ) = 0;
     };
 }
 

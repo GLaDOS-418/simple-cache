@@ -1,13 +1,14 @@
 #ifndef AppComponent_hpp
 #define AppComponent_hpp
 
+#include <string>
+#include <memory>
+
 #include "oatpp/web/server/HttpConnectionHandler.hpp"
-
 #include "oatpp/network/tcp/server/ConnectionProvider.hpp"
-
 #include "oatpp/parser/json/mapping/ObjectMapper.hpp"
-
 #include "oatpp/core/macro/component.hpp"
+#include "cache/LRUCache.h"
 
 /**
  *  Class which creates and holds Application components and registers components in oatpp::base::Environment
@@ -48,6 +49,11 @@ public:
     return oatpp::parser::json::mapping::ObjectMapper::createShared();
   }());
 
+  // cache component
+  OATPP_CREATE_COMPONENT( std::shared_ptr < cache::ICache > , lruCache )([] {
+    return std::make_shared<cache::LRUCache>( );
+
+  }());
 };
 
 #endif /* AppComponent_hpp */

@@ -4,16 +4,16 @@ set(project_name kv_store) ## rename your project here
 
 project(${project_name})
 
-set(CMAKE_CXX_STANDARD 11)
+set(CMAKE_CXX_STANDARD 17)
 
 include(${CMAKE_BINARY_DIR}/conanbuildinfo.cmake)
 conan_basic_setup()
 
 
 add_library(${project_name}-lib
-        "src/server/AppComponent.hpp"
+        "src/server/AppComponent.h"
         "src/controller/CacheController.cpp"
-        "src/controller/CacheController.hpp"
+        "src/controller/CacheController.h"
         "src/dto/AddEntryDto.h"
  "src/dto/RetrieveEntryDto.h" "src/cache/LRUCache.h" "src/cache/LRUCache.cpp")
 
