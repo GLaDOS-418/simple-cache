@@ -24,7 +24,7 @@ Based of the starter project of [Oat++(AKA oatpp)](https://oatpp.io/) applicatio
 
 ```
 $ mkdir build && cd build
-$ conan install ..
+$ conan install .. --remote=conancenter --build=missing
 $ cmake ..
 $ make
 $ ./kv_store-exe  # - run application.
