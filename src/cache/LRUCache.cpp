@@ -1,7 +1,6 @@
 #include "LRUCache.h" 
 
 #include <unordered_map>
-#include <atomic>
 #include <shared_mutex>
 
 namespace cache {
@@ -28,7 +27,7 @@ namespace cache {
             std::atomic<int> cacheSize;
 
         public:
-            Node* addNode( const Key& key ) {
+            [[nodiscard]] Node* addNode( const Key& key ) {
                 try {
                     if ( nullptr == start && nullptr == end ) {
                         start = new Node( key );
@@ -117,12 +116,12 @@ namespace cache {
         std::unordered_map<Key, Entry> m_data;
         List m_recentlyUsed;
 
-        std::shared_mutex rw_lock;
+        mutable std::shared_mutex rw_mutex;
 
     private:
         // utility functions, don't acquire locks
 
-        bool isCacheFull( ) {
+        [[nodiscard]] bool isCacheFull( ) const {
             // TODO : this should be something determined by the environment, probably available memory
             return false;
         }
@@ -141,18 +140,18 @@ namespace cache {
             }
         }
 
-        bool isExpired( const Entry& e ) {
+        [[nodiscard]] bool isExpired( const Entry& e ) const {
             // this should be used as validating TTL
             return false;
         }
 
     public:
 
-        // these operations are not ACI(D) compliant
-        // could be made so in the future
-
-        Status put( const Key& key, const Value& val ) {
+        // these operations are not ACI(D) compliant, these are not transactoinal
+        // i.e. even though they're thread safe, they're not exception safe
+        [[nodiscard]] Status put( const Key& key, const Value& val ) {
             // acquire write lock - raii
+            std::lock_guard lock( rw_mutex );
             try {
                 auto entry = m_data.find( key );
                 if ( m_data.end( ) != entry ) {
@@ -177,8 +176,9 @@ namespace cache {
             return Status::ERROR;
         }
 
-        std::tuple<Status, Value> get( const Key& key ) {
+        [[nodiscard]] std::tuple<Status, Value> get( const Key& key ) {
             // acquire read lock - raii
+            std::shared_lock lock( rw_mutex );
 
             try {
                 auto entry = m_data.find( key );
@@ -205,11 +205,11 @@ namespace cache {
     };
 
 
-    Status LRUCache::put( const Key& k, const Value& v ) {
+    [[nodiscard]] Status LRUCache::put( const Key& k, const Value& v ) {
         return pImpl->put( k, v );
     }
 
-    std::tuple<Status, Value> LRUCache::get( const Key& k ) const {
+    [[nodiscard]] std::tuple<Status, Value> LRUCache::get( const Key& k ) const {
         return pImpl->get( k );
     }
 }
