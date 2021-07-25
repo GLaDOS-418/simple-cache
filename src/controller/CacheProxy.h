@@ -16,13 +16,17 @@ namespace controller {
 
         OATPP_COMPONENT( std::shared_ptr<cache::ICache>, m_cache );
 
+        bool isValidKey( const cache::Key& key ) {
+            return m_cache->isValidKey( key );
+        }
+
     public:
         auto get( const cache::Key& key ) {
             auto [status, value] = m_cache->get( key );
 
             auto dto = dto::RetrieveEntryResDto::createShared( );
             dto->statusCode = status;
-            dto->value = value;
+            dto->value = value.c_str( );
 
             return dto;
         }
