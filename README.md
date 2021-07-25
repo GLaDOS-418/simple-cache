@@ -1,52 +1,32 @@
-# oatpp-starter [![Build Status](https://dev.azure.com/lganzzzo/lganzzzo/_apis/build/status/oatpp.oatpp-starter?branchName=master)](https://dev.azure.com/lganzzzo/lganzzzo/_build/latest?definitionId=10&branchName=master)
+# Simple Key-Value Store
 
-Starter project of oat++ (AKA oatpp) application. Based on oatpp Multithreaded (Simple) API.
-
-See more:
-
-- [Oat++ Website](https://oatpp.io/)
-- [Oat++ Github Repository](https://github.com/oatpp/oatpp)
-- [Get Started](https://oatpp.io/docs/start)
-
-## Overview
+Based of the starter project of [Oat++(AKA oatpp)](https://oatpp.io/) application using the multithreaded(simple) API.
 
 ### Project layout
 
 ```
-|- CMakeLists.txt                        // projects CMakeLists.txt
-|- src/
-|    |
-|    |- controller/                      // Folder containing MyController where all endpoints are declared
-|    |- dto/                             // DTOs are declared here
-|    |- AppComponent.hpp                 // Service config
-|    |- App.cpp                          // main() is here
-|
-|- test/                                 // test folder
-|- utility/install-oatpp-modules.sh      // utility script to install required oatpp-modules.  
+.
+├── CMakeLists.txt          // projects CMakeLists.txt
+├── conanfile.txt           // third party dependencies
+├── src
+│   ├── cache               // LRU Cache Implementation
+│   ├── controller          // CacheController
+│   ├── dto                 // DTOs for req and res
+│   └── server              // main() and server config
+└── test                    // test folder
 ```
 
 ---
 
 ### Build and Run
 
-#### Using CMake
-
-**Requires** 
-
-- `oatpp` module installed. You may run `utility/install-oatpp-modules.sh` 
-script to install required oatpp modules.
+- install oat++ third party dependency using [conan](https://www.conan.io) package manager.
 
 ```
 $ mkdir build && cd build
+$ conan install ..
 $ cmake ..
-$ make 
-$ ./my-project-exe  # - run application.
+$ make
+$ ./kv_store-exe  # - run application.
 
-```
-
-#### In Docker
-
-```
-$ docker build -t oatpp-starter .
-$ docker run -p 8000:8000 -t oatpp-starter
 ```
