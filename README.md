@@ -8,13 +8,12 @@
 - thread safe ( uses reader-writer pattern )
 - supports multiple clients
 - REST server
-- vlidates key (keys with spaces are invalid)
+- validates key (keys with spaces are invalid)
 
 ### TODO
 
-- make it exception safe
-- add swagger support
-- add docker support
+- make it exception safe ( make the changes transactional )
+- add docker and swagger support
 - handle server errors better
 - improve cache implementation by implementing e.g. utf support, probabilistic DS like bloom filters, scaling options
 
@@ -38,7 +37,6 @@
 
 - install cmake, make, gcc from your distro package manager.
 - install [conan](https://www.conan.io) from pip.
-- install [postman](https://www.postman.com/) and import `postman.api_tests.json` and run tests.
 - create your default conan profile. ignore if already exists.
  
 ```
@@ -61,6 +59,36 @@ $ cmake --build .
 $ ./bin/kv_store-exe         #run application
 ```
 
+- install [postman](https://www.postman.com/) and import `postman.api_tests.json` and run tests.
+
+
+### API
+
+**Request**
+
+http verb|url|body
+---|---|---
+GET|localhost:8000/cache?key=<key_to_find>| no body
+PUT|localhost:8000/cache|{ "key" : "foo", "value" : "bar" }
+
+**Response**
+
+http verb|response body
+---|---
+PUT|{ "statusCode": 2 }
+GET|{ "statusCode": 0, "value": "bar" }
+
+
+*status code in response body*
+
+```
+FOUND    = 0, // requested value for a key found
+NOTFOUND = 1, // key does not exist
+NEW      = 2, // new entry added in cache
+UPDATE,  = 3  // value updated
+INVALID, = 4  // invalid request, request denied/dropped ( could be some 4xx )
+ERROR    = 5  // internal server error ( could be 5xx )
+```
 
 ### NOTE
 
