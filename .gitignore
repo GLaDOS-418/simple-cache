@@ -34,6 +34,7 @@
 # custom build
 build/
 main/build/
+out/
 
 # idea
 .idea/

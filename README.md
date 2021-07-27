@@ -36,18 +36,31 @@
 
 ### Build and Run
 
+- install cmake, make, gcc from your distro package manager.
 - install [conan](https://www.conan.io) from pip.
-- install [Oat++(AKA oatpp)](https://oatpp.io/) third party dependency using conan package manager.
+- install [postman](https://www.postman.com/) and import `postman.api_tests.json` and run tests.
+- create your default conan profile. ignore if already exists.
+ 
+```
+$ conan profile new default --detect  # Generates default profile detecting GCC and sets old ABI
+$ conan profile update settings.compiler.libcxx=libstdc++11 default  # Sets libcxx to C++11 ABI
+```
+
+- install [Oat++(AKA oatpp)](https://oatpp.io/) third party dependency using conan package manager, from build directory. These dependencies are mentioned in `conanfile.txt`.
 
 ```
 $ mkdir build && cd build
-$ conan install .. --remote=conancenter --build=missing
-$ cmake ..
-$ cmake . --build
-$ ./kv_store-exe  # - run application.
+$ conan install .. --remote=conancenter --build=missing -s compiler=gcc -s compiler.version=11 -s compiler.cppstd=17 -s build_type=Debug -s compiler.libcxx=libstdc++11
 ```
 
-- install [postman](https://www.postman.com/) and import `postman.api_tests.json` and run tests.
+- build and run the application using cmake.
+ 
+```
+$ cmake .. -G "Ninja" -DCMAKE_BUILD_TYPE=Debug -DCMAKE_C_COMPILER=gcc -DCMAKE_CXX_COMPILER=g++
+$ cmake --build .
+$ ./bin/kv_store-exe         #run application
+```
+
 
 ### NOTE
 

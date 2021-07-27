@@ -10,12 +10,12 @@
 namespace cache {
 
     enum Status : uint16_t {
-        FOUND = 0,   // requested value for a key found
-        NOTFOUND, // key does not exist
-        NEW,     // new entry added in cache
-        UPDATE,  // value updated
-        INVALID, // invalid request, request denied/dropped
-        ERROR
+        FOUND =  0,   // requested value for a key found
+        NOTFOUND = 1, // key does not exist
+        NEW = 2,      // new entry added in cache
+        UPDATE = 3,   // value updated
+        INVALID = 4,  // invalid request, request denied/dropped
+        ERROR = 5
     };
 
     //using Key = oatpp::String;
