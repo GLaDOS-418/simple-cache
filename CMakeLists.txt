@@ -16,19 +16,13 @@ add_library(${project_name}-lib
         "src/cache/LRUCache.cpp"
         "src/controller/CacheProxy.h"
         "src/controller/CacheController.h"
-        "src/controller/CacheController.cpp"
+        
         "src/dto/AddEntryDto.h"
         "src/dto/RetrieveEntryDto.h"
         )
 
 ## link libs
 target_include_directories(${project_name}-lib PUBLIC src)
-
-## define path to swagger-ui res folder
-
-## add_definitions(
-##         -DOATPP_SWAGGER_RES_PATH="${oatpp-swagger_INCLUDE_DIRS}/../bin/oatpp-swagger/res"
-## )
 
 ## add executables
 add_executable(${project_name}-exe
@@ -64,5 +58,5 @@ set_target_properties(${project_name}-lib ${project_name}-exe ${project_name}-te
         CXX_STANDARD 17
 )
 
- enable_testing()
- add_test(project-tests ${project_name}-test)
+ ## enable_testing()
+ ## add_test(project-tests ${project_name}-test)

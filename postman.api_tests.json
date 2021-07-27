@@ -1,0 +1,370 @@
+{
+	"info": {
+		"_postman_id": "7c0c9010-d6f3-4ab2-abd9-7265d45280b2",
+		"name": "cache request tests",
+		"description": "Status Codes :\n```\nFOUND    = 0, // requested value for a key found\nNOTFOUND = 1, // key does not exist\nNEW      = 2, // new entry added in cache\nUPDATE,  = 3  // value updated\nINVALID, = 4  // invalid request, request denied/dropped ( could be some 4xx )\nERROR    = 5  // internal server error ( could be 5xx )\n```",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "new_udpate_foo",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"new, update | foo\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"    const responseJSON = pm.response.json();\r",
+							"    // new entry - 2, update  - 3\r",
+							"    pm.expect(responseJSON.statusCode).to.be.oneOf([2,3]) \r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"key\" : \"foo\",\r\n    \"value\" : \"bar\"\r\n}"
+				},
+				"url": {
+					"raw": "localhost:8000/cache",
+					"host": [
+						"localhost"
+					],
+					"port": "8000",
+					"path": [
+						"cache"
+					]
+				},
+				"description": "Add new k-v pair.\nSince this test can run multiple times, it'll be treated as new entry only the first time and update for the consequent requests."
+			},
+			"response": []
+		},
+		{
+			"name": "not_found_bar",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"not found | bar\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"    const responseJSON = pm.response.json();\r",
+							"    pm.expect(responseJSON.statusCode).to.eql(1) // not found - 1\r",
+							"    pm.expect(responseJSON.value).to.eql(\"\") // no value for not found\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "localhost:8000/cache?key=bar",
+					"host": [
+						"localhost"
+					],
+					"port": "8000",
+					"path": [
+						"cache"
+					],
+					"query": [
+						{
+							"key": "key",
+							"value": "bar"
+						}
+					]
+				},
+				"description": "This key is never added so shouldn't return any value."
+			},
+			"response": []
+		},
+		{
+			"name": "found_foo",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"found | foo\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"    const responseJSON = pm.response.json();\r",
+							"    pm.expect(responseJSON.statusCode).to.eql(0) // found - 0\r",
+							"    pm.expect(responseJSON.value).to.eql(\"bar\") // compare value\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "localhost:8000/cache?key=foo",
+					"host": [
+						"localhost"
+					],
+					"port": "8000",
+					"path": [
+						"cache"
+					],
+					"query": [
+						{
+							"key": "key",
+							"value": "foo"
+						}
+					]
+				},
+				"description": "should return the value entered in `new_update_foo` test."
+			},
+			"response": []
+		},
+		{
+			"name": "update_foo",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"update | foo\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"    const responseJSON = pm.response.json();\r",
+							"    // update - 3\r",
+							"    pm.expect(responseJSON.statusCode).to.eql(3) \r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"key\" : \"foo\",\r\n    \"value\" : \"bar 2\"\r\n}"
+				},
+				"url": {
+					"raw": "localhost:8000/cache",
+					"host": [
+						"localhost"
+					],
+					"port": "8000",
+					"path": [
+						"cache"
+					]
+				},
+				"description": "update the key `foo`."
+			},
+			"response": []
+		},
+		{
+			"name": "found_foo_update",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"found updated | foo\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"    const responseJSON = pm.response.json();\r",
+							"    pm.expect(responseJSON.statusCode).to.eql(0) // found - 0\r",
+							"    pm.expect(responseJSON.value).to.eql(\"bar 2\") // returned val\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "localhost:8000/cache?key=foo",
+					"host": [
+						"localhost"
+					],
+					"port": "8000",
+					"path": [
+						"cache"
+					],
+					"query": [
+						{
+							"key": "key",
+							"value": "foo"
+						}
+					]
+				},
+				"description": "try to fetch the value updated in `update_foo` test."
+			},
+			"response": []
+		},
+		{
+			"name": "new_update_hello",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"new, update | hello\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"    const responseJSON = pm.response.json();\r",
+							"    // new entry - 2, update  - 3\r",
+							"    pm.expect(responseJSON.statusCode).to.be.oneOf([2,3]) \r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"key\" : \"hello\",\r\n    \"value\" : \"world\"\r\n}"
+				},
+				"url": {
+					"raw": "localhost:8000/cache",
+					"host": [
+						"localhost"
+					],
+					"port": "8000",
+					"path": [
+						"cache"
+					]
+				},
+				"description": "enter a new key-value pair. new for first run, update for consequent runs."
+			},
+			"response": []
+		},
+		{
+			"name": "found_hello",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"found | hello\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"    const responseJSON = pm.response.json();\r",
+							"    pm.expect(responseJSON.statusCode).to.eql(0) // found - 0\r",
+							"    pm.expect(responseJSON.value).to.eql(\"world\") // compare value\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "localhost:8000/cache?key=hello",
+					"host": [
+						"localhost"
+					],
+					"port": "8000",
+					"path": [
+						"cache"
+					],
+					"query": [
+						{
+							"key": "key",
+							"value": "hello"
+						}
+					]
+				},
+				"description": "try to fetch the value entered in `new_update_hello`."
+			},
+			"response": []
+		},
+		{
+			"name": "invalid_key_1",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"new, update | hello world\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"    const responseJSON = pm.response.json();\r",
+							"    pm.expect(responseJSON.statusCode).to.eql(4) // invalid - 4\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"key\" : \"hello world\",\r\n    \"value\" : \"test\"\r\n}"
+				},
+				"url": {
+					"raw": "localhost:8000/cache",
+					"host": [
+						"localhost"
+					],
+					"port": "8000",
+					"path": [
+						"cache"
+					]
+				},
+				"description": "try to enter an invalid key, i.e. key with spaces in it."
+			},
+			"response": []
+		},
+		{
+			"name": "invalid_key_2",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"found | hello\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"    const responseJSON = pm.response.json();\r",
+							"    pm.expect(responseJSON.statusCode).to.eql(4) // invalid - 4\r",
+							"    pm.expect(responseJSON.value).to.eql(\"\") // compare value\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "localhost:8000/cache?key=hello%20world",
+					"host": [
+						"localhost"
+					],
+					"port": "8000",
+					"path": [
+						"cache"
+					],
+					"query": [
+						{
+							"key": "key",
+							"value": "hello%20world"
+						}
+					]
+				},
+				"description": "try to fetch a key that is invalid i.e. a key having spaces."
+			},
+			"response": []
+		}
+	]
+}
