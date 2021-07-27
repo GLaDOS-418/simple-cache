@@ -16,10 +16,6 @@ namespace controller {
 
         OATPP_COMPONENT( std::shared_ptr<cache::ICache>, m_cache );
 
-        [[nodiscard]] bool isValidKey( const cache::Key& key ) {
-            return m_cache->isValidKey( key );
-        }
-
     public:
         [[nodiscard]] auto get( const cache::Key& key ) {
             auto [status, value] = m_cache->get( key );

@@ -11,8 +11,8 @@ namespace cache {
     class LRUCache : public cache::ICache {
     public :
 
-        Status put( const Key&, const Value& ) override;
-        std::tuple<Status, Value> get( const Key& ) const override;
+        [[nodiscard]] Status put( const Key&, const Value& ) override;
+        [[nodiscard]] std::tuple<Status, Value> get( const Key& ) const override;
 
         LRUCache( );
         ~LRUCache( ) = default;

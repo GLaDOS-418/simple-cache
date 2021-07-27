@@ -5,6 +5,10 @@
 
 namespace cache {
 
+    /***********************************
+    * pIMpl ( LRUCache::LRUCacheImpl )
+    ************************************/
+
     LRUCache::LRUCache( ) : pImpl{ std::make_shared <LRUCache::LRUCacheImpl>( ) } {}
 
     struct LRUCache::LRUCacheImpl {
@@ -145,11 +149,22 @@ namespace cache {
             return false;
         }
 
+        [[nodiscard]] bool isValidKey( const Key& key ) const {
+            return !(key.find_first_of( " " ) != std::string::npos || // for json req
+                key.find_first_of( "%20" ) != std::string::npos || // percent-encoded
+                key.find_first_of( "+" ) != std::string::npos); // space represented with '+'
+        }
+
     public:
 
         // these operations are not ACI(D) compliant, these are not transactoinal
         // i.e. even though they're thread safe, they're not exception safe
         [[nodiscard]] Status put( const Key& key, const Value& val ) {
+
+            if ( !isValidKey( key ) ) {
+                return Status::INVALID;
+            }
+
             // acquire write lock - raii
             std::lock_guard lock( rw_mutex );
             try {
@@ -177,6 +192,11 @@ namespace cache {
         }
 
         [[nodiscard]] std::tuple<Status, Value> get( const Key& key ) {
+
+            if ( !isValidKey( key ) ) {
+                return { Status::INVALID, Value{} };
+            }
+
             // acquire read lock - raii
             std::shared_lock lock( rw_mutex );
 
@@ -205,6 +225,9 @@ namespace cache {
     };
 
 
+    /************
+    * LRUCache
+    *************/
     [[nodiscard]] Status LRUCache::put( const Key& k, const Value& v ) {
         return pImpl->put( k, v );
     }
@@ -212,4 +235,5 @@ namespace cache {
     [[nodiscard]] std::tuple<Status, Value> LRUCache::get( const Key& k ) const {
         return pImpl->get( k );
     }
+
 }

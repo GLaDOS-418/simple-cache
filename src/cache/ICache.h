@@ -26,11 +26,8 @@ namespace cache {
 
     class ICache {
     public:
-        virtual std::tuple<Status, Value> get( const Key& ) const = 0;
-        virtual Status put( const Key&, const Value& ) = 0;
-        virtual bool isValidKey( const Key& key ) const {
-            return key.find_first_of(" ") == std::string::npos;
-        }
+        virtual [[nodiscard]] std::tuple<Status, Value> get( const Key& ) const = 0;
+        virtual [[nodiscard]] Status put( const Key&, const Value& ) = 0;
     };
 }
 
